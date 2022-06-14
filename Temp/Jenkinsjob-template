@@ -1,0 +1,40 @@
+- job-template:
+    # default variable
+    disable_job: false
+    job_description: 'Do not edit this job through the web....!!!'
+    trigger_branch: 'develop,test,uat'
+    git_repo_url: sample-repo.git
+    git_credentials_id: 'sample-credentials-id'
+    job_folder: 'sample-folder'
+    # job configuration
+    name: '{job_folder}/{repo_name}'
+    id: 'branch-pipeline'
+    description: '{job_description}'
+    display-name: '{repo_name}'
+    periodic-folder-trigger: '1m'
+    project-type: multibranch
+    number-to-keep: '10'
+    script-path: Jenkinsfile
+    disabled: '{disable_job}'
+    scm:
+      - git:
+          url: '{git_repo_url}'
+          credentials-id: '{git_credentials_id}'
+          discover-tags: false
+          build-strategies:
+            - all-strategies-match:
+                strategies:
+                  - regular-branches: true
+          property-strategies:
+            named-branches:
+              defaults:
+                - suppress-scm-triggering: true
+              exceptions:
+                - exception:
+                    branch-name: '{trigger_branch}'
+                    properties:
+                      - suppress-scm-triggering: false
+
+- job:
+    name: sample-folder
+    project-type: folder

@@ -1,0 +1,12 @@
+- project:
+    name: my_project
+    repo_name:
+        - repo_name_1:
+            disable_job: true
+            trigger_branch: 'develop,test'
+            job_description: 'pipeline job for repo_name_1 deployment'
+        - repo_name_2
+        - repo_name_3
+        - repo_name_4
+    jobs:
+        - branch-pipeline

@@ -1,0 +1,47 @@
+version: '3.5'
+services:
+  jenkins-master:
+    image: jenkins/jenkins:2.332.2-lts
+    container_name: jenkins-master
+    hostname: jenkins-master
+    restart: on-failure:5
+    # privileged: true
+    user: root
+    environment:
+      JENKINS_OPTS: "--prefix=/jenkins"
+      JAVA_OPTS: "-Duser.timezone=Asia/Kolkata"
+      # TZ: "Asia/Kolkata"
+    ports:
+      - 8789:8080
+    # expose:
+    #   - 8080
+    volumes:
+      - /DATA/DevOps/jenkins/jenkins_home:/var/jenkins_home
+    depends_on:
+      - jenkins-agent
+    networks:
+      - jenkins-network
+
+  jenkins-agent:
+    image: akhilrajmailbox/jenkins:agent
+    # build:
+    #   context: ./Docker
+    #   dockerfile: Dockerfile
+    container_name: jenkins-agent
+    hostname: jenkins-agent
+    restart: on-failure:5
+    user: root
+    expose:
+      - 22
+    volumes:
+      - /DATA/DevOps/ldap-server:/var/ldap_server:ro
+      - /DATA/DevOps/jenkins/jenkins_home:/var/jenkins_home:ro
+      - /DATA/DevOps/jenkins/jenkins_agent:/var/jenkins_agent
+      - /DATA/DevOps/jenkins/root:/root
+    networks:
+      - jenkins-network
+
+networks:
+  jenkins-network:
+    external: true
+    name: devops-network
